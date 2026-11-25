@@ -244,11 +244,11 @@ static uint16_t utf8_to_utf16(const char* str, size_t* index) {
     if(c < 0x80) {
         (*index) += 1;
         return c;
-    } else if((c & 0xE0) == 0xC0 && str[*index + 1] != ' ') {
+    } else if((c & 0xE0) == 0xC0 && str[*index + 1] != '\0') {
         uint16_t code = ((c & 0x1F) << 6) | ((uint8_t)str[*index + 1] & 0x3F);
         (*index) += 2;
         return code;
-    } else if((c & 0xF0) == 0xE0 && str[*index + 1] != ' ' && str[*index + 2] != ' ') {
+    } else if((c & 0xF0) == 0xE0 && str[*index + 1] != '\0' && str[*index + 2] != '\0') {
         uint16_t code = ((c & 0x0F) << 12) |
                         (((uint8_t)str[*index + 1] & 0x3F) << 6) |
                         ((uint8_t)str[*index + 2] & 0x3F);
@@ -266,7 +266,7 @@ static void type_char_win_altcode(AppState* state, uint8_t ascii_code) {
     hid_kb_press(state, KEY_MOD_LEFT_ALT);
     furi_delay_ms(10);
 
-    for(size_t i = 0; digits[i] != ' '; i++) {
+    for(size_t i = 0; digits[i] != '\0'; i++) {
         uint8_t d = digits[i] - '0';
         if(d < 10) {
             hid_kb_press(state, numpad_keys[d]);
@@ -289,7 +289,7 @@ static void type_smart_string(
     uint32_t base_delay = (state->transport == TransportBle) ? 22 : 12;
 
     size_t i = 0;
-    while(str[i] != ' ') {
+    while(str[i] != '\0') {
         uint16_t codepoint = utf8_to_utf16(str, &i);
         if(codepoint == 0) continue;
 
@@ -324,20 +324,13 @@ static void init_sd_profiles(void) {
         if(file_stream_open(stream, sample_path, FSAM_WRITE, FSOM_CREATE_ALWAYS)) {
             stream_write_cstring(
                 stream,
-                "# Работает по USB и Bluetooth HID при любой раскладке!
-"
-                "USB_ID 046D:C31C
-"
-                "MFR Logitech
-"
-                "PROD USB Keyboard
-"
-                "ALT_MODE 1
-"
-                "Write-Host 'Chameleon Provisioner v1.2 (USB + BLE) Ready!' -ForegroundColor Green
-"
-                "Get-ComputerInfo | Select-Object CsName, OsName
-");
+                "# Работает по USB и Bluetooth HID при любой раскладке!\n"
+                "USB_ID 046D:C31C\n"
+                "MFR Logitech\n"
+                "PROD USB Keyboard\n"
+                "ALT_MODE 1\n"
+                "Write-Host 'Chameleon Provisioner v1.2 (USB + BLE) Ready!' -ForegroundColor Green\n"
+                "Get-ComputerInfo | Select-Object CsName, OsName\n");
         }
         file_stream_close(stream);
         stream_free(stream);
@@ -405,10 +398,10 @@ static void parse_usb_descriptors(const char* filepath, FuriHalUsbHidConfig* hid
                 }
             } else if(strncmp(cmd, "MFR ", 4) == 0) {
                 strncpy(hid_cfg->manuf, cmd + 4, sizeof(hid_cfg->manuf) - 1);
-                hid_cfg->manuf[sizeof(hid_cfg->manuf) - 1] = ' ';
+                hid_cfg->manuf[sizeof(hid_cfg->manuf) - 1] = '\0';
             } else if(strncmp(cmd, "PROD ", 5) == 0) {
                 strncpy(hid_cfg->product, cmd + 5, sizeof(hid_cfg->product) - 1);
-                hid_cfg->product[sizeof(hid_cfg->product) - 1] = ' ';
+                hid_cfg->product[sizeof(hid_cfg->product) - 1] = '\0';
             }
         }
     }
