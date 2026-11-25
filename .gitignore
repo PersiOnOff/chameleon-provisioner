@@ -1,0 +1,14 @@
+# uFBT build artifacts and SDK cache
+.ufbt/
+build/
+dist/
+*.fap
+*.elf
+*.bin
+*.dfu
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
