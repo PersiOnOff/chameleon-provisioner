@@ -1,0 +1,21 @@
+# Multi-Window Workspace Automation & Lock using KEY_* Directives
+USB_ID 05AC:024F
+MFR Apple Inc.
+PROD Magic Keyboard
+NO_TERM
+ALT_MODE 1
+# Switch to previous active IDE/Terminal window
+KEY_ALT_TAB
+SLEEP 600
+# Open quick command palette / navigate UI via TAB
+KEY_TAB
+SLEEP 300
+KEY_TAB
+SLEEP 300
+KEY_ENTER
+SLEEP 1000
+# Dismiss modal popup if present
+KEY_ESC
+SLEEP 500
+# Lock workstation when leaving desk
+KEY_GUI_L

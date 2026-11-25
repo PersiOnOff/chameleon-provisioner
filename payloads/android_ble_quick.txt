@@ -1,0 +1,11 @@
+# Wireless Bluetooth HID Automation for Android
+# Switch Flipper to BLE mode (Long Press OK) and pair with Android device first
+NO_TERM
+SLEEP 500
+# Open quick URL or search via browser shortcut / launcher
+KEY_GUI_SPACE
+SLEEP 800
+https://github.com
+KEY_ENTER
+SLEEP 1500
+MOUSE_SCROLL -4

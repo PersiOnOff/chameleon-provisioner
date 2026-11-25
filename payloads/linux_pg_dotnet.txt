@@ -1,9 +1,13 @@
-# Быстрое развертывание PostgreSQL и .NET SDK (Ubuntu/Debian)
-USB_ID 046D:C52B
-MFR Logitech
-PROD USB Receiver
-sudo apt-get update && sudo apt-get install -y postgresql postgresql-contrib dotnet-sdk-8.0
-SLEEP 4000
+# Ubuntu/Debian PostgreSQL & .NET 11 SDK (C# 11+) Provisioning
+USB_ID 046A:0023
+MFR Cherry GmbH
+PROD G83 Keyboard
+sudo apt-get update && sudo apt-get install -y curl wget gpg apt-transport-https postgresql postgresql-contrib
+SLEEP 3000
 sudo systemctl enable --now postgresql
-sudo -u postgres psql -c "SELECT version();"
-dotnet --info | head -n 15
+wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb
+SLEEP 1500
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-11.0
+SLEEP 3000
+dotnet --version && sudo -u postgres psql -c "SELECT version();"

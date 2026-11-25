@@ -1,0 +1,12 @@
+# Linux Keyboard Layout Switch & .NET 11 Workspace Init (KEY_* Demo)
+USB_ID 046D:C52B
+MFR Logitech
+PROD USB Receiver
+# Force layout toggle before typing ASCII commands
+KEY_ALT_SHIFT
+SLEEP 400
+mkdir -p ~/projects/dotnet11-app && cd ~/projects/dotnet11-app
+SLEEP 500
+dotnet new console -n CoreService --framework net11.0
+SLEEP 1500
+cd CoreService && dotnet run

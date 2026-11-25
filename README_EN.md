@@ -1,67 +1,64 @@
-# Chameleon Provisioner for Flipper Zero
+# Chameleon Provisioner (v1.2.0)
 
-**Chameleon Provisioner** is a context-aware USB HID automation and provisioning application (`.fap`) for Flipper Zero. It allows dynamically spoofing USB device descriptors (`VID/PID`, manufacturer, and product strings) and executing multi-step provisioning scripts directly from the SD card with built-in keyboard layout protection.
+[Читать документацию на русском](README.md)
 
-> *[Читать документацию на русском языке](README.md)*
+**Chameleon Provisioner** is a context-aware hybrid HID provisioner for **Flipper Zero** supporting both wired **USB HID** and wireless **Bluetooth LE HID** transports, dynamic USB descriptor spoofing (`VID`, `PID`, `MFR`, `PROD`), mouse/scroll emulation, and layout-independent execution.
 
-## Key Features
+## Features (v1.2.0)
 
-* **Dynamic USB Descriptor Spoofing (`FuriHalUsbHidConfig`):** Emulates legitimate USB keyboards (Logitech, Apple, Cherry, or custom hardware) by configuring `VID`, `PID`, `MFR`, and `PROD` descriptors per script.
-* **SD Card Script Engine:** Reads `.txt` payload scripts directly from `/ext/chameleon/` using the native Flipper file browser (`DialogsApp`) — no firmware recompilation required.
-* **Layout-Independent Windows Typing (`ALT_MODE`):** Types ASCII commands on Windows via `Alt + Numpad` codes, ensuring payloads execute accurately even if a non-English keyboard layout (e.g., Russian) or `CapsLock` is active.
-* **Native `.kl` Layout Support:** Loads Flipper keyboard layout tables (`/ext/badusb/assets/layouts/*.kl`) to type localized UTF-8 characters.
-* **Humanized Keystroke Timing:** Introduces randomized inter-key delays to simulate natural typing cadence.
-* **Clean USB Profile Restoration:** Automatically restores the previous USB interface configuration (e.g., USB CDC/Serial for qFlipper) after script execution completes.
+* **Dual Transport (`USB` & `BLE`):** Switch seamlessly between wired USB HID and wireless Bluetooth LE HID by long-pressing the **OK** button.
+* **Isolated BLE Bonding Keys:** Stores HID pairing keys separately in `/ext/apps_data/chameleon_provisioner/hid.keys` without breaking your primary Flipper mobile app connection.
+* **Dynamic USB Descriptor Spoofing:** Override `VID`, `PID`, Manufacturer (`MFR`), and Product (`PROD`) strings directly from the `.txt` script header (USB mode).
+* **Layout-Independent Windows Input (`ALT_MODE 1`):** Types ASCII commands via `Alt + Numpad` on Windows, preventing garbled text when non-US keyboard layouts are active.
+* **`.kl` Keymap Support:** Load standard Flipper keymaps from `/ext/badusb/assets/layouts/` (e.g., `LAYOUT ru-RU.kl`) for localized text input.
+* **Mouse & Scroll Emulation:** Smooth relative cursor movement, single/double clicks, and scroll wheel control.
+* **Special Keys (`KEY_*`):** Built-in shortcuts (`KEY_ALT_Y`, `KEY_ALT_SHIFT`, `KEY_GUI_D`, `KEY_GUI_L`, etc.) for UI and dialog navigation without a mouse.
+* **Built-in File Browser:** Pick any `.txt` payload from `/ext/chameleon/` using Flipper's native file dialog.
 
 ## Controls on Flipper Zero
 
 | Button | Action |
 | :--- | :--- |
-| **Left / Right** | Switch target operating system profile (`Windows (PS)`, `Linux (Bash)`, `macOS (Zsh)`) |
-| **Up / Down** | Open the SD card file browser in `/ext/chameleon` to select a `.txt` script |
-| **OK** | Parse headers, spoof USB HID descriptors, open target terminal, and run the script |
-| **Back** | Exit the application cleanly |
+| **Left / Right** | Select target OS (`Windows (PS)`, `Linux (Bash)`, `macOS (Zsh)`) |
+| **Up / Down** | Open file browser to select a `.txt` script from `/ext/chameleon/` |
+| **OK (Short Press)** | Execute the selected payload |
+| **OK (Long Press)** | Toggle transport mode between `USB` and `BLE` |
+| **Back** | Exit application and restore default USB/BLE profile |
+
+## Bluetooth HID Pairing Guide (v1.2.0)
+
+1. Launch **Chameleon Provisioner** on your Flipper Zero.
+2. **Hold the OK button** (~1 second) until the top-right badge switches from `USB` to **`BLE`**.
+3. On your target host (PC, laptop, Android phone, or iPad/iPhone), open **Bluetooth Settings**.
+4. Pair with **`Chameleon <Flipper_Name>`**.
+5. Once connected, the badge changes to **`BLE*`** — you can now trigger payloads wirelessly with a short press of **OK**.
+
+> **Note:** In `BLE` mode, `ALT_MODE` (Alt+Numpad) is automatically disabled for compatibility with mobile OSes, macOS, and Linux, and keystroke timings are adjusted for Bluetooth throughput.
 
 ## Script Directives Reference
 
-Place `.txt` scripts inside `SD Card/chameleon/`. On first launch, the app automatically creates this directory and generates a sample `win_ru_safe.txt` file.
-
-| Directive | Example | Description |
+| Directive | Description | Example |
 | :--- | :--- | :--- |
-| `USB_ID <VID>:<PID>` | `USB_ID 05AC:024F` | Sets custom USB Vendor ID and Product ID in hex format before HID enumeration. |
-| `MFR <string>` | `MFR Apple Inc.` | Sets the USB Manufacturer string descriptor (up to 31 characters). |
-| `PROD <string>` | `PROD Magic Keyboard` | Sets the USB Product string descriptor (up to 31 characters). |
-| `ALT_MODE <1\|0>` | `ALT_MODE 1` | Enables (`1`) or disables (`0`) layout-independent `Alt + Numpad` ASCII input on Windows. |
-| `LAYOUT <file.kl>` | `LAYOUT ru-RU.kl` | Loads a keymap table from `/ext/badusb/assets/layouts/` for localized UTF-8 text. |
-| `SLEEP <ms>` | `SLEEP 1500` | Pauses script execution for the specified number of milliseconds. |
-| `#` or `REM ` | `# Setup environment` | Comment line (ignored during execution). |
-
-### Example Payload (`apple_spoof_demo.txt`)
-
-```text
-# Spoof as Apple Magic Keyboard and run diagnostics
-USB_ID 05AC:024F
-MFR Apple Inc.
-PROD Magic Keyboard
-ALT_MODE 1
-Write-Host 'Spoofed as Apple Magic Keyboard!' -ForegroundColor Cyan
-Get-PnpDevice -Class Keyboard -Status OK | Select-Object FriendlyName, InstanceId
-```
+| `USB_ID <VID>:<PID>` | Spoof Vendor ID and Product ID (USB only) | `USB_ID 046D:C52B` |
+| `MFR <string>` | Spoof Manufacturer string (up to 31 chars) | `MFR Apple Inc.` |
+| `PROD <string>` | Spoof Product string (up to 31 chars) | `PROD Magic Keyboard` |
+| `ALT_MODE <0\|1>` | Type ASCII via Alt+Numpad on Windows | `ALT_MODE 1` |
+| `LAYOUT <file.kl>` | Load keymap layout file from SD card | `LAYOUT ru-RU.kl` |
+| `NO_TERM` | Skip automatic terminal launch | `NO_TERM` |
+| `SLEEP <ms>` | Pause execution in milliseconds | `SLEEP 1500` |
+| `MOUSE_MOVE <dx> <dy>` | Smooth relative cursor movement | `MOUSE_MOVE 120 -40` |
+| `MOUSE_CLICK <btn>` | Mouse button click (`LEFT`, `RIGHT`, `MIDDLE`) | `MOUSE_CLICK LEFT` |
+| `MOUSE_DBLCLICK` | Double left-click | `MOUSE_DBLCLICK` |
+| `MOUSE_SCROLL <delta>` | Scroll wheel (`+` up, `-` down) | `MOUSE_SCROLL -5` |
+| `KEY_<name>` | Press special key or system shortcut | `KEY_ALT_Y`, `KEY_GUI_L` |
 
 ## Building from Source
 
-This project uses the official **micro Flipper Build Tool (`uFBT`)**.
-
-1. Install `uFBT`:
-   ```bash
-   python -m pip install --upgrade ufbt
-   ```
-2. Build and launch directly on a connected Flipper Zero (close `qFlipper` first):
-   ```bash
-   ufbt launch
-   ```
-3. Alternatively, push a version tag (`v*`) to GitHub to automatically build the `.fap` binary via GitHub Actions.
+```bash
+pip install --upgrade ufbt
+ufbt launch
+```
 
 ## Disclaimer
 
-This software is developed strictly for authorized system administration, endpoint policy auditing, and educational research on systems you own or have explicit written permission to test.
+This tool is intended strictly for authorized system administration, environment provisioning, and security testing on systems you own or have explicit permission to test.

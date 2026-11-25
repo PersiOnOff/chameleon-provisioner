@@ -1,0 +1,14 @@
+# Wireless Bluetooth HID Automation for iOS / iPadOS
+# Switch Flipper to BLE mode (Long Press OK) and pair with iPhone/iPad first
+NO_TERM
+SLEEP 500
+# Open Spotlight Search (Cmd + Space)
+KEY_GUI_SPACE
+SLEEP 800
+Notes
+SLEEP 600
+KEY_ENTER
+SLEEP 1200
+# Create new note and type quick diagnostic checklist
+Chameleon BLE HID Check: OK
+KEY_ENTER

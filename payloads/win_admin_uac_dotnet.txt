@@ -1,0 +1,21 @@
+# Windows Admin PowerShell via UAC (KEY_* Navigation) & .NET 11 Check
+USB_ID 046D:C31C
+MFR Logitech
+PROD USB Keyboard
+NO_TERM
+ALT_MODE 1
+# Minimize all windows first
+KEY_GUI_D
+SLEEP 500
+# Open Run dialog and launch elevated PowerShell
+KEY_GUI_R
+SLEEP 600
+powershell Start-Process powershell -Verb RunAs
+KEY_ENTER
+SLEEP 1800
+# Confirm Windows UAC prompt automatically
+KEY_ALT_Y
+SLEEP 1500
+Write-Host "=== Elevated Admin Shell Active (.NET 11 Environment) ===" -ForegroundColor Yellow
+Set-ExecutionPolicy RemoteSigned -Scope LocalMachine -Force
+dotnet --list-sdks

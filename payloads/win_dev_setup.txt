@@ -1,0 +1,13 @@
+# Windows Developer Environment Setup (.NET 11 / C# 11+ Stack)
+USB_ID 046D:C31C
+MFR Logitech
+PROD USB Keyboard
+ALT_MODE 1
+Write-Host "=== Installing Git, Docker Desktop & .NET 11 SDK ===" -ForegroundColor Cyan
+winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements
+SLEEP 2000
+winget install -e --id Docker.DockerDesktop --accept-source-agreements --accept-package-agreements
+SLEEP 2000
+winget install -e --id Microsoft.DotNet.SDK.11 --accept-source-agreements --accept-package-agreements
+SLEEP 2000
+dotnet --info
