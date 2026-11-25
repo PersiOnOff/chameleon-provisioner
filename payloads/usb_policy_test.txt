@@ -1,0 +1,5 @@
+# Тест политик Device Control: нестандартный VID/PID
+USB_ID 1234:5678
+ALT_MODE 1
+Write-Host "[!] Warning: Unregistered USB HID device was permitted by OS policy!" -ForegroundColor Red
+Get-Date | Out-File -FilePath "$env:TEMP\usb_audit_marker.txt"

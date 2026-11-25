@@ -1,0 +1,5 @@
+# Снимок сетевого периметра и активных служб
+USB_ID 046D:C31C
+OUT=~/host_audit_$(hostname)_$(date +%H%M).txt
+{ echo "=== SYSTEM ==="; uname -a; echo "=== PORTS ==="; ss -tulpn; echo "=== DOCKER ==="; docker ps 2>/dev/null; } > $OUT
+echo "Audit saved to $OUT"

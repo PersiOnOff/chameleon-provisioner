@@ -5,7 +5,8 @@ App(
     entry_point="chameleon_provisioner_app",
     stack_size=2 * 1024,
     fap_category="USB",
+    fap_icon="icon.png",
     fap_version=(1, 0),
-    fap_author="Developer",
-    fap_description="Context-aware cross-platform HID provisioner with layout support",
+    fap_author="PersiOnOff",
+    fap_description="Context-aware cross-platform HID provisioner with USB descriptor spoofing and layout support",
 )

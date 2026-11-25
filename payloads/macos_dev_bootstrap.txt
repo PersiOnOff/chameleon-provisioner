@@ -1,0 +1,12 @@
+# macOS Developer Environment Quick Setup
+# Быстрая установка Homebrew и базовых CLI-инструментов на macOS
+USB_ID 05AC:024F
+MFR Apple Inc.
+PROD Magic Keyboard
+echo "=== Checking Xcode CLI Tools & Homebrew ==="
+xcode-select --install 2>/dev/null || true
+SLEEP 1500
+which brew >/dev/null || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+SLEEP 3000
+brew install git jq htop wget
+echo "=== macOS Dev Setup Finished ==="

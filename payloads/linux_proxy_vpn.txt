@@ -1,0 +1,8 @@
+# Настройка и проверка SOCKS5/HTTP прокси и маршрутизации (Linux)
+USB_ID 046D:C31C
+MFR Logitech
+PROD USB Keyboard
+export http_proxy="http://127.0.0.1:10808" https_proxy="http://127.0.0.1:10808" all_proxy="socks5://127.0.0.1:10808"
+echo 'Proxy environment variables configured for current session'
+curl -s --max-time 5 https://ifconfig.me || echo 'Direct/Proxy check failed'
+ip route show | head -n 10

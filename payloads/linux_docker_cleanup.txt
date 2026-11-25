@@ -1,0 +1,10 @@
+# Linux Docker & Disk Space Maintenance
+# Безопасная очистка неиспользуемых образов, контейнеров и логов на тестовом сервере
+USB_ID 046D:C52B
+MFR Logitech
+PROD USB Receiver
+echo "=== Disk Usage Before Cleanup ===" && df -h /
+docker system prune -af --volumes
+SLEEP 3000
+sudo journalctl --vacuum-time=3d
+echo "=== Disk Usage After Cleanup ===" && df -h /

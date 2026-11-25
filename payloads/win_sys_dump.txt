@@ -1,0 +1,11 @@
+# Полный сбор диагностики системы и событий Windows
+USB_ID 413C:2113
+MFR Dell
+PROD Dell KB216 Wired Keyboard
+ALT_MODE 1
+$OutDir = "$env:USERPROFILE\Desktop\FlipperDiag_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
+systeminfo > "$OutDir\systeminfo.txt"
+Get-Process | Sort-Object CPU -Descending | Select-Object -First 25 Name, Id, CPU, WorkingSet > "$OutDir\top_processes.txt"
+Get-WinEvent -LogName System -MaxEvents 30 | Format-Table TimeCreated, Id, LevelDisplayName, Message -AutoSize > "$OutDir\system_events.txt"
+Write-Host "Diagnostics saved to $OutDir" -ForegroundColor Green

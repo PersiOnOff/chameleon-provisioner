@@ -1,0 +1,15 @@
+# Windows Network & DNS Diagnostics
+# Маскировка под клавиатуру Dell с независимым от раскладки вводом
+USB_ID 413C:2113
+MFR Dell
+PROD Dell KB216 Wired Keyboard
+ALT_MODE 1
+Write-Host '=== Running Network Diagnostics ===' -ForegroundColor Cyan
+$out = "$env:USERPROFILE\Desktop\net_diag_$(Get-Date -Format 'yyyyMMdd_HHmm').txt"
+"=== IP CONFIG ===" | Out-File $out
+ipconfig /all | Out-File $out -Append
+"=== ACTIVE CONNECTIONS ===" | Out-File $out -Append
+netstat -ano | Select-String "ESTABLISHED|LISTENING" | Out-File $out -Append
+"=== DNS CACHE ===" | Out-File $out -Append
+Get-DnsClientCache | Select-Object -First 30 | Out-File $out -Append
+Write-Host "Report saved to $out" -ForegroundColor Green

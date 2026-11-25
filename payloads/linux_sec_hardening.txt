@@ -1,0 +1,13 @@
+# Linux Server Quick Security Hardening
+# Базовая защита свежего VPS/VM: Fail2ban, отключение входа по паролю SSH и UFW
+USB_ID 046A:0023
+MFR Cherry GmbH
+PROD G83 Keyboard
+sudo apt-get update && sudo apt-get install -y ufw fail2ban
+SLEEP 3000
+sudo sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo sed -i 's/^#*PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+sudo ufw default deny incoming && sudo ufw default allow outgoing
+sudo ufw allow 22/tcp && sudo ufw --force enable
+echo "=== Hardening Complete ===" && sudo ufw status

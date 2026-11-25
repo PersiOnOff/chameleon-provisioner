@@ -1,0 +1,5 @@
+# Работает даже при включенной русской раскладке на ПК!
+USB_ID 046D:C31C
+ALT_MODE 1
+Write-Host 'Chameleon Provisioner Ready!' -ForegroundColor Green
+Get-ComputerInfo | Select-Object CsName, OsName

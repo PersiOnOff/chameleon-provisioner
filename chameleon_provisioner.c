@@ -166,6 +166,8 @@ static void init_sd_profiles(void) {
                 stream,
                 "# Работает даже при включенной русской раскладке на ПК!\n"
                 "USB_ID 046D:C31C\n"
+                "MFR Logitech\n"
+                "PROD USB Keyboard\n"
                 "ALT_MODE 1\n"
                 "Write-Host 'Chameleon Provisioner Ready!' -ForegroundColor Green\n"
                 "Get-ComputerInfo | Select-Object CsName, OsName\n");
@@ -230,7 +232,12 @@ static void parse_usb_descriptors(const char* filepath, FuriHalUsbHidConfig* hid
                     hid_cfg->vid = (uint16_t)vid;
                     hid_cfg->pid = (uint16_t)pid;
                 }
-                break;
+            } else if(strncmp(cmd, "MFR ", 4) == 0) {
+                strncpy(hid_cfg->manuf, cmd + 4, sizeof(hid_cfg->manuf) - 1);
+                hid_cfg->manuf[sizeof(hid_cfg->manuf) - 1] = '\0';
+            } else if(strncmp(cmd, "PROD ", 5) == 0) {
+                strncpy(hid_cfg->product, cmd + 5, sizeof(hid_cfg->product) - 1);
+                hid_cfg->product[sizeof(hid_cfg->product) - 1] = '\0';
             }
         }
     }
@@ -258,7 +265,8 @@ static bool execute_sd_script(TargetOs os, const char* filepath) {
             const char* cmd = furi_string_get_cstr(line);
 
             if(strlen(cmd) == 0 || cmd[0] == '#' || strncmp(cmd, "REM ", 4) == 0 ||
-               strncmp(cmd, "USB_ID ", 7) == 0) {
+               strncmp(cmd, "USB_ID ", 7) == 0 || strncmp(cmd, "MFR ", 4) == 0 ||
+               strncmp(cmd, "PROD ", 5) == 0) {
                 continue;
             }
 
@@ -310,8 +318,8 @@ static void run_provisioning_payload(AppState* state, NotificationApp* notificat
     FuriHalUsbHidConfig hid_cfg = {
         .vid = 0x046D,
         .pid = 0xC31C,
-        .mfr_name = "Logitech",
-        .prod_name = "USB Keyboard",
+        .manuf = "Logitech",
+        .product = "USB Keyboard",
     };
     parse_usb_descriptors(filepath, &hid_cfg);
 
